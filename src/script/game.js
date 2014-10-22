@@ -9,20 +9,23 @@ window.addEventListener("load", function() {
     }).controls().touch();
     
     Q.setImageSmoothing(false);
+    
+    Q.Sprite.extend("Player", {
+        init: function(p) {
+            this._super(p, { x: 10, y: 10, asset: 'player.PNG', jumpSpeed: -400 });
+            this.add('2d, platformerControls');
+        },
+        step: function(dt) {
+            if(Q.inputs['down']) {
+                var ground = Q.stage().locate(this.p.x, this.p.y + this.p.h/2 + 1, Q.SPRITE_DEFAULT);
+                ground.p.type = 0;
+            }
+        }
+    });
 
     Q.scene("level",function(stage) {
-        
-        var player = new Q.Sprite({
-            x: 10,
-            y: 10,
-            asset: 'player.PNG',
-            jumpSpeed: -400
-        });
-        
-        player.add('2d, platformerControls');
-      
         Q.stageTMX("level1.tmx",stage); 
-        stage.insert(player);
+        stage.insert(new Q.Player());
         stage.add("viewport");      
     });
 
@@ -31,3 +34,7 @@ window.addEventListener("load", function() {
       Q.stageScene("level");
     });
 });
+
+
+// Q.inputs['down']
+//       var ground = Q.stage().locate(this.p.x, this.p.y + this.p.h/2 + 1, Q.SPRITE_DEFAULT);
