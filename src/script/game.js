@@ -8,22 +8,22 @@ window.addEventListener("load",function() {
       scaleToFit: true
     }).controls().touch();
 
-    Q.enableSound();
+    //Q.enableSound();
     Q.setImageSmoothing(false);
 
     Q.scene("level",function(stage) {
-      var player;
-      var levelLayer; 
+      //var player;
+      //var levelLayer; 
 
-      Q.stageTMX("tiles.tmx",stage); 
+      Q.stageTMX("level1.tmx",stage); 
       //player = Q("Player").first();
               
       stage.add("viewport");//.follow(player,{x: true, y: true});      
     });
 
     //load assets
-    Q.loadTMX("tiles.tmx", function() {       
-      //Q.compileSheets("sprites.png","sprites.json");     
+    Q.loadTMX("level1.tmx, SpriteSheet.PNG", function() {       
+      Q.compileSheets("SpriteSheet.PNG");     
       Q.stageScene("level");
     });
     
