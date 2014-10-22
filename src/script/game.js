@@ -16,9 +16,19 @@ window.addEventListener("load", function() {
             this.add('2d, platformerControls');
         },
         step: function(dt) {
+            
+            var getTileLocation = function(x,y) {
+                var x1 = Math.floor(x / 80);
+                var y1 = Math.floor(y / 80);
+                return {x: x1, y: y1};
+            };
+            
             if(Q.inputs['down']) {
-                var ground = Q.stage().locate(this.p.x, this.p.y + this.p.h/2 + 1, Q.SPRITE_DEFAULT);
-                ground.p.type = 0;
+                var ground = Q.stage().locate(this.p.x, this.p.y + this.p.h, Q.SPRITE_DEFAULT);
+                if(ground && ground.p) {
+                    var point = getTileLocation(this.p.x, this.p.y);
+                    ground.p.tiles[point.y + 1][point.x] = null;
+                }
             }
         }
     });
@@ -34,7 +44,3 @@ window.addEventListener("load", function() {
       Q.stageScene("level");
     });
 });
-
-
-// Q.inputs['down']
-//       var ground = Q.stage().locate(this.p.x, this.p.y + this.p.h/2 + 1, Q.SPRITE_DEFAULT);
