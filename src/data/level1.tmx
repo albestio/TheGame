@@ -636,6 +636,9 @@
   </data>
  </layer>
  <layer name="Ground" width="25" height="25">
+  <properties>
+   <property name="collision" value="true"/>
+  </properties>
   <data>
    <tile gid="0"/>
    <tile gid="0"/>

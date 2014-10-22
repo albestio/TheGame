@@ -1,4 +1,4 @@
-window.addEventListener("load",function() {
+window.addEventListener("load", function() {
   var Q = window.Q = Quintus({development: true})
     .include("Scenes, Sprites, 2D, Input, Touch, UI, TMX, Audio")
     //.include("ActionPlatformerPlayer, ActionPlatformerEnemy")
@@ -7,24 +7,27 @@ window.addEventListener("load",function() {
       height: 2000,
       scaleToFit: true
     }).controls().touch();
-
-    //Q.enableSound();
+    
     Q.setImageSmoothing(false);
 
     Q.scene("level",function(stage) {
-      //var player;
-      //var levelLayer; 
-
-      Q.stageTMX("level1.tmx",stage); 
-      //player = Q("Player").first();
-              
-      stage.add("viewport");//.follow(player,{x: true, y: true});      
+        
+        var player = new Q.Sprite({
+            x: 10,
+            y: 10,
+            asset: 'player.PNG',
+            jumpSpeed: -400
+        });
+        
+        player.add('2d, platformerControls');
+      
+        Q.stageTMX("level1.tmx",stage); 
+        stage.insert(player);
+        stage.add("viewport");      
     });
 
     //load assets
-    Q.loadTMX("level1.tmx, SpriteSheet.PNG", function() {       
-      Q.compileSheets("SpriteSheet.PNG");     
+    Q.loadTMX("level1.tmx, player.PNG", function() {       
       Q.stageScene("level");
     });
-    
 });
