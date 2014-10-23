@@ -1,10 +1,10 @@
 About the Game
 ==============
 
-Digger type game
-Maze type leveling up game
-Winning = beating all levels
-Losing = Dieing
+- Digger type game
+- Maze type leveling up game
+- Winning = beating all levels
+- Losing = Dieing
 
 Todo
 ====
