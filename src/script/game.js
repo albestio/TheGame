@@ -28,8 +28,7 @@ window.addEventListener("load", function () {
                 var ground = Q.stage().locate(this.p.x, this.p.y + this.p.h, Q.SPRITE_DEFAULT);
                 if (ground && ground.p) {
                     var point = getTileLocation(this.p.x, this.p.y);
-                    ground.p.tiles[point.y + 1][point.x] = 8;
-                    Q.stage().render();
+                    ground.p.tiles[point.y + 1][point.x] = null;
                 }
             }
         }
