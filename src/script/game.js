@@ -10,6 +10,21 @@ window.addEventListener("load", function () {
         .touch();
     Q.setImageSmoothing(false);
     
+    Q.Sprite.extend("DugTile", {
+     init: function(p) {
+       this._super({
+         asset: "player.PNG",
+         frame: 12,
+         x: p.x,
+         y: p.y,
+         width:80,
+         height:80,
+         z:1,
+         type: 0
+       });
+     }
+   });
+    
     Q.Sprite.extend("Player", {
         init: function (p) {
             this._super(p, { x: 0, y: 0, asset: "player.PNG", jumpSpeed: -400 });
@@ -29,6 +44,8 @@ window.addEventListener("load", function () {
                 if (ground && ground.p) {
                     var point = getTileLocation(this.p.x, this.p.y);
                     ground.p.tiles[point.y + 1][point.x] = null;
+                    var tile = new Q['DugTile']({x:this.p.x, y:(this.p.y + 80)});
+                    Q.stage().insert(tile);
                 }
             }
         }
