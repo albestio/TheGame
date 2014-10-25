@@ -1,6 +1,9 @@
 window.addEventListener("load", function () {
+    
+    "use strict";
+    
     // Now set up your game (most games will load a separate .js file)
-    var Q = Quintus()
+    var Q = new Quintus()
         .include("Sprites, Scenes, Input, 2D, Touch, UI")
         .setup({
             width: 1000,
@@ -10,10 +13,12 @@ window.addEventListener("load", function () {
         .controls()
         .touch();
 
+    var playerIsColliding = false;
+    
     // You can create a sub-class by extending the Q.Sprite class to create Q.Player
     Q.Sprite.extend("Player", {
         // the init constructor is called on creation
-        init: function(p) {
+        init: function (p) {
             // You can call the parent's constructor with this._super(..)
             this._super(p, {
                 sheet: "player",  // Setting a sprite sheet sets sprite width and height
@@ -28,22 +33,26 @@ window.addEventListener("load", function () {
 
             // Write event handlers to respond hook into behaviors.
             // hit.sprite is called everytime the player collides with a sprite
-            this.on("hit.sprite",function(collision) {
+            this.on("hit.sprite", function (collision) {
                 // Check the collision, if it's the Tower, you win!
-                if(collision.obj.isA("Tower")) {
+                if (collision.obj.isA("Tower")) {
                     // Stage the endGame scene above the current stage
-                    Q.stageScene("endGame",1, { label: "You Won!" }); 
+                    Q.stageScene("endGame", 1, { label: "You Won!" });
                     // Remove the player to prevent them from moving
                     this.destroy();
                 }
             });
         },
-        collision: function(col) {
-            if(Q.inputs.down || Q.inputs.right) {
+        collision: function (col) {
+            if ((Q.inputs.down || Q.inputs.right) && !playerIsColliding) {
+                playerIsColliding = true;
                 col.obj.setTile(col.tileX, col.tileY, 0);
+                setTimeout(function () {
+                    playerIsColliding = false;
+                }, 500);
             }
         },
-        step: function(dt) {
+        step: function (dt) {
         }
     });
 
@@ -55,8 +64,8 @@ window.addEventListener("load", function () {
     });*/
 
     // Create the Enemy class to add in some baddies
-    Q.Sprite.extend("Enemy",{
-        init: function(p) {
+    Q.Sprite.extend("Enemy", {
+        init: function (p) {
             this._super(p, { sheet: 'enemy', vx: 100 });
 
             // Enemies use the Bounce AI to change direction 
@@ -65,17 +74,17 @@ window.addEventListener("load", function () {
 
             // Listen for a sprite collision, if it's the player,
             // end the game unless the enemy is hit on top
-            this.on("bump.left,bump.right,bump.bottom",function(collision) {
-                if(collision.obj.isA("Player")) { 
-                    Q.stageScene("endGame",1, { label: "You Died" }); 
+            this.on("bump.left,bump.right,bump.bottom", function (collision) {
+                if (collision.obj.isA("Player")) {
+                    Q.stageScene("endGame", 1, { label: "You Died" });
                     collision.obj.destroy();
                 }
             });
 
             // If the enemy gets hit on the top, destroy it
             // and give the user a "hop"
-            this.on("bump.top",function(collision) {
-                if(collision.obj.isA("Player")) { 
+            this.on("bump.top", function (collision) {
+                if (collision.obj.isA("Player")) {
                     this.destroy();
                     collision.obj.p.vy = -300;
                 }
@@ -84,16 +93,16 @@ window.addEventListener("load", function () {
     });
 
     Q.TileLayer.extend("Floor", {
-        init: function() {
+        init: function () {
             this._super({
                 dataAsset: 'level.json',
-                sheet: 'tiles' 
+                sheet: 'tiles'
             });
         }
     });
 
     // Create a new scene called level 1
-    Q.scene("level1", function(stage) {
+    Q.scene("level1", function (stage) {
 
         // Add in a tile layer, and make it the collision layer
         stage.collisionLayer(new Q.Floor());
@@ -116,20 +125,22 @@ window.addEventListener("load", function () {
     // To display a game over / game won popup box, 
     // create a endGame scene that takes in a `label` option
     // to control the displayed message.
-    Q.scene('endGame',function(stage) {
+    Q.scene('endGame', function (stage) {
         var container = stage.insert(new Q.UI.Container({
-            x: Q.width/2, y: Q.height/2, fill: "rgba(0,0,0,0.5)"
-        }));
-
-        var button = container.insert(
-            new Q.UI.Button({ x: 0, y: 0, fill: "#CCCCCC", label: "Play Again" }))         
-
-        var label = container.insert(
-            new Q.UI.Text({x:10, y: -10 - button.p.h, label: stage.options.label }));
+            x: Q.width / 2,
+            y: Q.height / 2,
+            fill: "rgba(0,0,0,0.5)"
+        })),
+            button = container.insert(
+                new Q.UI.Button({ x: 0, y: 0, fill: "#CCCCCC", label: "Play Again" })
+            ),
+            label = container.insert(
+                new Q.UI.Text({x: 10, y: -10 - button.p.h, label: stage.options.label })
+            );
 
         // When the button is clicked, clear all the stages
         // and restart the game.
-        button.on("click",function() {
+        button.on("click", function () {
             Q.clearStages();
             Q.stageScene('level1');
         });
@@ -142,10 +153,10 @@ window.addEventListener("load", function () {
     // assets that are already loaded will be skipped
     Q.load("sprites.png, sprites.json, level.json, tiles.png", function () {
         // Sprites sheets can be created manually
-        Q.sheet("tiles","tiles.png", { tilew: 32, tileh: 32 });
+        Q.sheet("tiles", "tiles.png", { tilew: 32, tileh: 32 });
 
         // Or from a .json asset that defines sprite locations
-        Q.compileSheets("sprites.png","sprites.json");
+        Q.compileSheets("sprites.png", "sprites.json");
 
         // Finally, call stageScene to run the game
         Q.stageScene("level1");
