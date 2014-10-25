@@ -13,7 +13,15 @@ window.addEventListener("load", function () {
         .controls()
         .touch();
     
-    var getTileFromPos = function(x, y) { return { "x" :  Math.floor(x / 32), "y" : Math.floor(y / 32) }; };
+    Q.getTileFromPosiition = function(x, y) { 
+        return { "x" :  Math.floor(x / 32), "y" : Math.floor(y / 32) }; 
+    };
+
+    // Return a x and y location from a row and column
+    // in our tile map
+    Q.getPositionFromTile = function(col,row) {
+        return { x: col*32 + 16, y: row*32 + 16 };
+    }
     
     // You can create a sub-class by extending the Q.Sprite class to create Q.Player
     Q.Sprite.extend("Player", {
@@ -44,7 +52,7 @@ window.addEventListener("load", function () {
             });
         },
         collision: function (col) {
-            var pos = getTileFromPos(this.p.x, this.p.y);
+            var pos = Q.getTileFromPosiition(this.p.x, this.p.y);
             if (Q.inputs.down) {
                 col.obj.setTile(pos.x, pos.y + 1, 0);
             } else if(Q.inputs.right) {
@@ -56,6 +64,7 @@ window.addEventListener("load", function () {
         step: function (dt) {
             if(this.p.y > Q.height) {
                 Q.stageScene("endGame", 1, { label: "You Died" });
+                this.destroy();
             }
         }
     });
@@ -123,7 +132,7 @@ window.addEventListener("load", function () {
         //stage.insert(new Q.Enemy({ x: 800, y: 0 }));
 
         // Finally add in the tower goal
-        //stage.insert(new Q.Tower({ x: 180, y: 50 }));
+        stage.insert(new Q.Tower(Q.getPositionFromTile(12, 12)));
     });
 
     // To display a game over / game won popup box, 
