@@ -6,13 +6,13 @@ window.addEventListener("load", function () {
     var Q = new Quintus()
         .include("Sprites, Scenes, Input, 2D, Touch, UI")
         .setup({
-            width: 1000,
-            height: 500,
+            width: 640, 
+            height: 480,
             scaleToFit: true
         })
         .controls()
         .touch();
-
+    
     var getTileFromPos = function(x, y) { return { "x" :  Math.floor(x / 32), "y" : Math.floor(y / 32) }; };
     
     // You can create a sub-class by extending the Q.Sprite class to create Q.Player
@@ -54,15 +54,18 @@ window.addEventListener("load", function () {
             }
         },
         step: function (dt) {
+            if(this.p.y > Q.height) {
+                Q.stageScene("endGame", 1, { label: "You Died" });
+            }
         }
     });
 
     // Sprites can be simple, the Tower sprite just sets a custom sprite sheet
-    /*Q.Sprite.extend("Tower", {
+    Q.Sprite.extend("Tower", {
         init: function(p) {
             this._super(p, { sheet: 'tower' });
         }
-    });*/
+    });
 
     // Create the Enemy class to add in some baddies
     Q.Sprite.extend("Enemy", {
@@ -130,7 +133,7 @@ window.addEventListener("load", function () {
         var container = stage.insert(new Q.UI.Container({
             x: Q.width / 2,
             y: Q.height / 2,
-            fill: "rgba(0,0,0,0.5)"
+            fill: "rgba(255,0,0,0.5)"
         })),
             button = container.insert(
                 new Q.UI.Button({ x: 0, y: 0, fill: "#CCCCCC", label: "Play Again" })
@@ -143,7 +146,7 @@ window.addEventListener("load", function () {
         // and restart the game.
         button.on("click", function () {
             Q.clearStages();
-            Q.stageScene('level1');
+            Q.stageScene("level1", 0);
         });
 
         // Expand the container to visibily fit it's contents
@@ -160,6 +163,6 @@ window.addEventListener("load", function () {
         Q.compileSheets("sprites.png", "sprites.json");
 
         // Finally, call stageScene to run the game
-        Q.stageScene("level1");
+        Q.stageScene("level1", 0);
     });
 });
