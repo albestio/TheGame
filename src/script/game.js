@@ -10,20 +10,35 @@ window.addEventListener("load", function () {
         .touch();
     Q.setImageSmoothing(false);
     
-    Q.Sprite.extend("DugTile", {
-     init: function(p) {
-       this._super({
-         asset: "player.PNG",
-         frame: 12,
-         x: p.x,
-         y: p.y,
-         width:80,
-         height:80,
-         z:1,
-         type: 0
-       });
-     }
-   });
+    var SPRITE_TILES = 2;
+    Q.TileLayer.extend("TowerManMap",{
+        init: function() {
+          this._super({
+            type: SPRITE_TILES,
+            dataAsset: 'level.json',
+            sheet:     'tiles',
+          });
+        },
+        
+        setup: function() {
+          // Clone the top level arriw
+          var tiles = this.p.tiles = this.p.tiles.concat();
+          var size = this.p.tileW;
+          for(var y=0;y<tiles.length;y++) {
+            var row = tiles[y] = tiles[y].concat();
+            for(var x =0;x<row.length;x++) {
+              var tile = row[x];
+
+              if(tile == 0 || tile == 2) {
+                var className = tile == 0 ? 'Dot' : 'Tower'
+                this.stage.insert(new Q[className](Q.tilePos(x,y)));
+                row[x] = 0;
+              }
+            }
+          }
+        }
+
+      });
     
     Q.Sprite.extend("Player", {
         init: function (p) {
