@@ -13,7 +13,7 @@ window.addEventListener("load", function () {
         .controls()
         .touch();
 
-    var playerIsColliding = false;
+    var getTileFromPos = function(x, y) { return { "x" :  Math.floor(x / 32), "y" : Math.floor(y / 32) }; };
     
     // You can create a sub-class by extending the Q.Sprite class to create Q.Player
     Q.Sprite.extend("Player", {
@@ -21,9 +21,9 @@ window.addEventListener("load", function () {
         init: function (p) {
             // You can call the parent's constructor with this._super(..)
             this._super(p, {
-                sheet: "player",  // Setting a sprite sheet sets sprite width and height
-                x: 50,           // You can also set additional properties that can
-                y: 50            // be overridden on object creation
+                sheet: "player",
+                x: 50,
+                y: 50
             });
 
             // Add in pre-made components to get up and running quickly
@@ -44,12 +44,13 @@ window.addEventListener("load", function () {
             });
         },
         collision: function (col) {
-            if ((Q.inputs.down || Q.inputs.right) && !playerIsColliding) {
-                playerIsColliding = true;
-                col.obj.setTile(col.tileX, col.tileY, 0);
-                setTimeout(function () {
-                    playerIsColliding = false;
-                }, 500);
+            var pos = getTileFromPos(this.p.x, this.p.y);
+            if (Q.inputs.down) {
+                col.obj.setTile(pos.x, pos.y + 1, 0);
+            } else if(Q.inputs.right) {
+                col.obj.setTile(pos.x + 1, pos.y, 0);
+            } else if(Q.inputs.left) {
+                col.obj.setTile(pos.x - 1, pos.y, 0);
             }
         },
         step: function (dt) {
