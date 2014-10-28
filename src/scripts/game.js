@@ -6,22 +6,22 @@ window.addEventListener("load", function () {
     var Q = new Quintus()
         .include("Sprites, Scenes, Input, 2D, Touch, UI")
         .setup({
-            width: 640, 
+            width: 640,
             height: 480,
             scaleToFit: true
         })
         .controls()
         .touch();
     
-    Q.getTileFromPosiition = function(x, y) { 
-        return { "x" :  Math.floor(x / 32), "y" : Math.floor(y / 32) }; 
+    Q.getTileFromPosiition = function (x, y) {
+        return { "x" :  Math.floor(x / 32), "y" : Math.floor(y / 32) };
     };
 
     // Return a x and y location from a row and column
     // in our tile map
-    Q.getPositionFromTile = function(col,row) {
-        return { x: col*32 + 16, y: row*32 + 16 };
-    }
+    Q.getPositionFromTile = function (col, row) {
+        return { x: col * 32 + 16, y: row * 32 + 16 };
+    };
     
     // You can create a sub-class by extending the Q.Sprite class to create Q.Player
     Q.Sprite.extend("Player", {
@@ -52,17 +52,19 @@ window.addEventListener("load", function () {
             });
         },
         collision: function (col) {
-            var pos = Q.getTileFromPosiition(this.p.x, this.p.y);
-            if (Q.inputs.down) {
-                col.obj.setTile(pos.x, pos.y + 1, 0);
-            } else if(Q.inputs.right) {
-                col.obj.setTile(pos.x + 1, pos.y, 0);
-            } else if(Q.inputs.left) {
-                col.obj.setTile(pos.x - 1, pos.y, 0);
+            if (col.obj.isA("Floor")) {
+                var pos = Q.getTileFromPosiition(this.p.x, this.p.y);
+                if (Q.inputs.down) {
+                    col.obj.setTile(pos.x, pos.y + 1, 0);
+                } else if (Q.inputs.right) {
+                    col.obj.setTile(pos.x + 1, pos.y, 0);
+                } else if (Q.inputs.left) {
+                    col.obj.setTile(pos.x - 1, pos.y, 0);
+                }
             }
         },
         step: function (dt) {
-            if(this.p.y > Q.height) {
+            if (this.p.y > Q.height) {
                 Q.stageScene("endGame", 1, { label: "You Died" });
                 this.destroy();
             }
@@ -71,7 +73,7 @@ window.addEventListener("load", function () {
 
     // Sprites can be simple, the Tower sprite just sets a custom sprite sheet
     Q.Sprite.extend("Tower", {
-        init: function(p) {
+        init: function (p) {
             this._super(p, { sheet: 'tower' });
         }
     });
